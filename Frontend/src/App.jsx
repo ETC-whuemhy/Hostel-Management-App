@@ -5,6 +5,7 @@ import AdminReg from './Component/Register/AdminReg'
 import StudentReg from './Component/Register/StudentReg'
 import { Login } from './Component/Register/Login'
 import Layout from './Component/Layout/Layout'
+import AdminPreview from './Component/AdminPreview/AdminPreview'
 
 function App() {
   const RenderRoute = () => (
@@ -16,6 +17,7 @@ function App() {
             <StudentReg/>
           </Layout>
         }/>
+        <Route path='/adminprev' element={<AdminPreview/>}/>
     </Routes>
   )
 
