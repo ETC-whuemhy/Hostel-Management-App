@@ -38,7 +38,7 @@ const AdminReg = () => {
             </div>
             <button className='--btn'>Create Account</button>
         </form>
-        <p className='account'>Already have an account?</p>
+        <p className='account'>Already have an account? </p>
        </div>
     </div>
   )
