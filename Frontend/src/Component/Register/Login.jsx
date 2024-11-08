@@ -11,8 +11,9 @@ export const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate()
   
-  const handleInputChange = () => {
-
+  const handleInputChange = (e) => {
+    const formInput = e.target.value;
+    setFormData(formInput)
   }
   
   const loginUser = () => {

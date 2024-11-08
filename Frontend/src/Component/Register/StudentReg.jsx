@@ -35,10 +35,10 @@ const StudentReg = () => {
             
             <div className="--dir-column">
                 <label htmlFor="email">Guardian's Contact Email:</label>
-                <input type="email" className='input' name='email' placeholder='Enter email' required />
+                <input type="email" className='input' name='email' placeholder='Enter Email' required />
             </div>
-
-            {/* <div className="card">
+{/* 
+            <div className="card">
                 <ul>
                     <li className="indicator"><span>&nbsp; Lowercase & Uppercase</span></li>
                     <li className="indicator"><span>&nbsp; Number (0 - 9)</span></li>

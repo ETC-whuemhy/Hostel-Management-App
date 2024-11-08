@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './AdminPreview.css'
 import UserTable from './UserTable';
 import { CiSearch } from "react-icons/ci";
+import { Link } from 'react-router-dom';
 
 const userData = [
     { id: 1, name: 'Muby', email: 'muby@gmail.com', role: 'Admin'},

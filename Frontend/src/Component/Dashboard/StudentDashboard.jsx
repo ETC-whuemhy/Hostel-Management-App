@@ -31,10 +31,19 @@ const studentData = [
     id: 3,
     studentName: "Maria Garcia",
     email: "mariagarcia@gmall.com",
-    gender: "Male",
+    gender: "Female",
     idNumber: '54321',
     age: "25",
     nationality: "Spanish",
+  },
+  {
+    id: 4,
+    studentName: "Garcia Jons",
+    email: "garciajons@gmall.com",
+    gender: "Male",
+    idNumber: '09876',
+    age: "27",
+    nationality: "German",
   },
 ];
 
@@ -85,7 +94,7 @@ const StudentDashboard = () => {
             message: 'You really wanna delete this student? 🤔',
             buttons: [
                 {label: 'Delete', onClick: () => handleDelete(id)},
-                {label: 'Cancel', onClick: () => ('Deletion Cancelled')}
+                {label: 'Cancel', onClick: () => alert('Deletion Cancelled')}
             ]
         })
     }
@@ -107,13 +116,13 @@ const StudentDashboard = () => {
                         <div className="--flex-justify-between">
                             <p>Students</p>
                             {isSideBarToggled ? (
-                                <IoCloseOutline className="sidebar-toggle-iconB" onClick={() => setIsSideBarToggled(false)}/>
-                            ) : (<IoMenu className="sidebar-toggle-iconB" onClick={() => setIsSideBarToggled(true)}/>)}
+                                <IoCloseOutline className="sidebar-toggle-icon" onClick={() => setIsSideBarToggled(false)}/>
+                            ) : (<IoMenu className="sidebar-toggle-icon" onClick={() => setIsSideBarToggled(true)}/>)}
                         </div>
                         <p>Search Students</p>
                         <input type="text" placeholder="Search by name, email or ID Number" className="search" value={searchTerm} onChange={handleSearchChange}/>
                         <div className="table">
-                            <table className="table_wrapper">
+                            <table className="table_wrapper room-table">
                                 <thead className="table__head">
                                     <tr className="table__row">
                                         <th className="same_class">Student's Name</th>
