@@ -8,6 +8,7 @@ import Layout from './Component/Layout/Layout'
 import AdminPreview from './Component/AdminPreview/AdminPreview'
 import HomeDash from './Component/Dashboard/HomeDash'
 import StudentDashboard from './Component/Dashboard/StudentDashboard'
+import Room from './Component/Dashboard/Room'
 
 function App() {
   const RenderRoute = () => (
@@ -26,6 +27,7 @@ function App() {
           </Layout>
         }/>
         <Route path='/student-dash' element={<StudentDashboard/>}/>
+        <Route path='/room' element={<Room/>}/>
     </Routes>
   )
 
