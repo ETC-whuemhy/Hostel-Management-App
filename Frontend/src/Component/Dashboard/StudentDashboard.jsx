@@ -3,7 +3,7 @@ import SideBar from "./SideBar";
 import "./Dashboard.css";
 import { IoCloseOutline, IoMenu } from "react-icons/io5";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { FaPenFancy } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { confirmAlert } from "react-confirm-alert";
 import UpdateStudentProfile from "../Modal/UpdateStudentProfile";
@@ -150,7 +150,7 @@ const StudentDashboard = () => {
                         <td className="same_class">{student.age}</td>
                         <td className="same_class">{student.nationality}</td>
                         <td className="same_class"><RiDeleteBin6Line size={20} color="red" onClick={() => confirmDelete(student.id)}/>
-                            &nbsp;&nbsp;<FaPenFancy size={20} color="blue" onClick={() => handleModalOpen(student)}/></td>
+                            &nbsp;&nbsp;<FaPen size={20} color="blue" onClick={() => handleModalOpen(student)}/></td>
                       </tr>
                     ))}
                   </tbody>
@@ -172,22 +172,9 @@ const StudentDashboard = () => {
           </div>
         </div>
       )}
-      {selectedModal === "UpdateStudentProfile" && (
-        <UpdateStudentProfile
-          student={selectedStudent}
-          updateFilteredData={updateFilteredData}
-          onClose={handleModalClose}
-        />
-      )}
-      {selectedModal === "ChangeStudentRoom" && (
-        <ChangeStudentRoom
-          student={selectedStudent}
-          onClose={handleModalClose}
-        />
-      )}
-      {selectedModal === "UpdateCheckin" && (
-        <UpdateCheckin student={selectedStudent} onClose={handleModalClose} />
-      )}
+      {selectedModal === "UpdateStudentProfile" && (<UpdateStudentProfile student={selectedStudent} updateFilteredData={updateFilteredData} onClose={handleModalClose}/>)}
+      {selectedModal === "ChangeStudentRoom" && (<ChangeStudentRoom student={selectedStudent} onClose={handleModalClose}/>)}
+      {selectedModal === "UpdateCheckin" &&  (<UpdateCheckin student={selectedStudent} onClose={handleModalClose} />)}
     </div>
   );
 };

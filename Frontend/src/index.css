@@ -92,6 +92,7 @@ img {
   /* width: 84px; */
   height: 40px;
 }
+
 .notification {
   border-radius: 12px;
   background: var(--secondary-btn-bg);
