@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./AdminPreview.css";
+import "./Adminpreview.css";
 import UserTable from "./UserTable";
 import { CiSearch } from "react-icons/ci";
 import { Link } from "react-router-dom";
@@ -7,20 +7,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 
+
 const override = {
   display: "block",
   margin: "100px auto",
 };
-
-// const adminData = [
-//   { id: 1, name: "Muby", email: "muby@gmail.com", role: "Admin" },
-//   { id: 2, name: "Teddy", email: "teddy@gmail.com", role: "Admin" },
-//   { id: 3, name: "OG", email: "og@gmail.com", role: "Member" },
-//   { id: 4, name: "Chapo", email: "chapo@gmail.com", role: "Admin" },
-//   { id: 5, name: "Opera", email: "opera@gmail.com", role: "Admin" },
-//   { id: 6, name: "Rodiyat", email: "rodiyat@gmail.com", role: "Member" },
-// ];
-
 
 const BASE_URL =import.meta.env.VITE_BASE_URL;
 
