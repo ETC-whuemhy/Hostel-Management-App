@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SideBar from "./SideBar";
 import "./Dashboard.css";
 import { IoCloseOutline, IoMenu } from "react-icons/io5";
@@ -9,79 +9,72 @@ import { confirmAlert } from "react-confirm-alert";
 import UpdateStudentProfile from "../Modal/UpdateStudentProfile";
 import ChangeStudentRoom from "../Modal/ChangeStudentRoom";
 import UpdateCheckin from "../Modal/UpdateCheckin";
+import { ClipLoader } from "react-spinners";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-const studentData = [
-  {
-    id: 1,
-    studentName: "Jessica Smith",
-    email: "jessicasmith@gmail.com",
-    idNumber: "12345",
-    gender: "Female",
-    age: "20",
-    nationality: "American",
-    guardianName: "OG",
-    guardianEmail: "og@abc.com",
-  },
-  {
-    id: 2,
-    studentName: "John Doe",
-    email: "johndoe@gmail.com",
-    gender: "Male",
-    idNumber: "67890",
-    age: "22",
-    nationality: "British",
-    guardianName: "Chapo",
-    guardianEmail: "chapo@abc.com",
-  },
-  {
-    id: 3,
-    studentName: "Maria Garcia",
-    email: "mariagarcia@gmall.com",
-    gender: "Female",
-    idNumber: "54321",
-    age: "25",
-    nationality: "Spanish",
-    guardianName: "Teddy",
-    guardianEmail: "teddy@abc.com",
-  },
-  {
-    id: 4,
-    studentName: "Garcia Jons",
-    email: "garciajons@gmall.com",
-    gender: "Male",
-    idNumber: "09876",
-    age: "27",
-    nationality: "German",
-    guardianName: "FajMan",
-    guardianEmail: "fajman@abc.com",
-  },
-];
+const override = {
+  display: "block",
+  margin: "100px auto",
+};
+
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const StudentDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [students, setStudents] = useState(studentData);
-  const [filteredData, updateFilteredData] = useState(studentData);
+  const [filteredData, setFilteredData] = useState([]);
   const [isSideBarToggled, setIsSideBarToggled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedModal, setSelectedModal] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [currentRoomNumber, setCurrentRooomNumber] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSearchChange = (e) => {
-    const term = e.target.value.toLowerCase();
-    setSearchTerm(term);
-    const filtered = students.filter((student) => student.studentName.toLowerCase().includes(term) || student.email.toLowerCase().includes(term) || student.idNumber.includes(term));
-    updateFilteredData(filtered);
-  };
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/student/`, {
+          withCredentials: true,
+        });
+        const data = response.data;
+        setFilteredData(data);
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to fetch students");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchStudents();
+  }, [filteredData]);
 
-  const handleDelete = (studentId) => {
-    const updatedUsers = students.filter((student) => student.id !== studentId);
-    setStudents(updatedUsers);
-    const updatedFilterData = filteredData.filter((student) => student.id !== studentId);
-    updateFilteredData(updatedFilterData);
+  const filtered = filteredData?.filter(
+    (student) =>
+      student?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
+      student.email.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      student.nationality.toLowerCase().includes(searchTerm?.toLowerCase())
+  );
+
+  const handleDelete = async (studentId) => {
+    try {
+      const res = await axios.delete(
+        `${BASE_URL}/student/delete/${studentId}`,
+        { withCredentials: true }
+      );
+      toast.success(res?.data?.message);
+      const updatedFilterData = filteredData.filter(
+        (student) => student._id !== studentId
+      );
+      setFilteredData(updatedFilterData);
+    } catch (error) {
+      console.error(error?.response?.data?.message);
+    }
   };
 
   const handleModalOpen = (students) => {
     setSelectedStudent(students);
+    setCurrentRooomNumber(students?.room?.roomNumber);
     setIsModalOpen(true);
   };
 
@@ -106,6 +99,11 @@ const StudentDashboard = () => {
     });
   };
 
+  if (isLoading)
+    return (
+      <ClipLoader color="#3a86ff" cssOverride={override} loading={isLoading} />
+    );
+
   return (
     <div>
       {isSideBarToggled && (
@@ -122,10 +120,26 @@ const StudentDashboard = () => {
             <div className="right dash-main">
               <div className="--flex-justify-between">
                 <p>Students</p>
-                {isSideBarToggled ? (<IoCloseOutline className="sidebar-toggle-icon" onClick={() => setIsSideBarToggled(false)}/>
-                ) : (<IoMenu className="sidebar-toggle-icon" onClick={() => setIsSideBarToggled(true)}/>)}</div>
+                {isSideBarToggled ? (
+                  <IoCloseOutline
+                    className="sidebar-toggle-icon"
+                    onClick={() => setIsSideBarToggled(false)}
+                  />
+                ) : (
+                  <IoMenu
+                    className="sidebar-toggle-icon"
+                    onClick={() => setIsSideBarToggled(true)}
+                  />
+                )}
+              </div>
               <p>Search Students</p>
-              <input type="text" placeholder="Search by name, email or ID Number" className="search" value={searchTerm} onChange={handleSearchChange}/>
+              <input
+                type="text"
+                placeholder="Search by name, email or ID Number"
+                className="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
               <div className="table">
                 <table className="table_wrapper room-table">
                   <thead className="table__head">
@@ -136,27 +150,44 @@ const StudentDashboard = () => {
                       <th className="same_class">Gender</th>
                       <th className="same_class">Age</th>
                       <th className="same_class">Nationality</th>
+                      <th className="same_class">Room No</th>
                       <th className="same_class">Actions</th>
                     </tr>
                   </thead>
 
                   <tbody className="table__body">
-                    {filteredData.map((student, index) => (
+                    {filtered.map((student, index) => (
                       <tr key={index} className="table__row">
-                        <td className="same_class">{student.studentName}</td>
+                        <td className="same_class">{student.name}</td>
                         <td className="same_class">{student.email}</td>
-                        <td className="same_class">{student.idNumber}</td>
+                        <td className="same_class">{student._id}</td>
                         <td className="same_class">{student.gender}</td>
                         <td className="same_class">{student.age}</td>
                         <td className="same_class">{student.nationality}</td>
-                        <td className="same_class"><RiDeleteBin6Line size={20} color="red" onClick={() => confirmDelete(student.id)}/>
-                            &nbsp;&nbsp;<FaPen size={20} color="blue" onClick={() => handleModalOpen(student)}/></td>
+                        <td className="same_class">
+                          {student?.room?.roomNumber}
+                        </td>
+                        <td className="same_class">
+                          <RiDeleteBin6Line
+                            size={20}
+                            color="red"
+                            onClick={() => confirmDelete(student._id)}
+                          />
+                          &nbsp;&nbsp;
+                          <FaPen
+                            size={20}
+                            color="blue"
+                            onClick={() => handleModalOpen(student)}
+                          />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-                <Link to="/studentreg"><button className="btn-secondary">Add a student</button></Link>   
+              <Link to="/studentreg">
+                <button className="btn-secondary">Add a student</button>
+              </Link>
             </div>
           </main>
         </div>
@@ -165,16 +196,48 @@ const StudentDashboard = () => {
         <div className="modal">
           <div className="modal-content">
             <h2>Select An Option</h2>
-            <button className="one" onClick={() => handleModalSelect("UpdateStudentProfile")}>Update Student's Profile</button>
-            <button className="two" onClick={() => handleModalSelect("ChangeStudentRoom")}>Change Student's Room</button>
-            <button className="three" onClick={() => handleModalSelect("UpdateCheckin")}>Update Check In</button>
+            <button
+              className="one"
+              onClick={() => handleModalSelect("UpdateStudentProfile")}
+            >
+              Update Student's Profile
+            </button>
+            <button
+              className="two"
+              onClick={() => handleModalSelect("ChangeStudentRoom")}
+            >
+              Change Student's Room
+            </button>
+            <button
+              className="three"
+              onClick={() => handleModalSelect("UpdateCheckin")}
+            >
+              Update Check In
+            </button>
             <button onClick={handleModalClose}>Close</button>
           </div>
         </div>
       )}
-      {selectedModal === "UpdateStudentProfile" && (<UpdateStudentProfile student={selectedStudent} updateFilteredData={updateFilteredData} onClose={handleModalClose}/>)}
-      {selectedModal === "ChangeStudentRoom" && (<ChangeStudentRoom student={selectedStudent} onClose={handleModalClose}/>)}
-      {selectedModal === "UpdateCheckin" &&  (<UpdateCheckin student={selectedStudent} onClose={handleModalClose} />)}
+      {selectedModal === "UpdateStudentProfile" && (
+        <UpdateStudentProfile
+          student={selectedStudent}
+          updateFilteredData={setFilteredData}
+          onClose={handleModalClose}
+        />
+      )}
+      {selectedModal === "ChangeStudentRoom" && (
+        <ChangeStudentRoom
+          student={selectedStudent}
+          onClose={handleModalClose}
+        />
+      )}
+      {selectedModal === "UpdateCheckin" && (
+        <UpdateCheckin
+          student={selectedStudent}
+          onClose={handleModalClose}
+          currentRoomNumber={currentRoomNumber}
+        />
+      )}
     </div>
   );
 };
